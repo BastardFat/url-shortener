@@ -12,9 +12,9 @@ app.use(cookieParser())
 app.use(express.static(__dirname + '/static/html'));
 
 var mustacheExpress = require('mustache-express');
-app.engine('mustache', mustacheExpress(__dirname + '\\views\\partials', '.mustache'));
+app.engine('mustache', mustacheExpress(__dirname + '/views//partials', '.mustache'));
 app.set('view engine', 'mustache');
-app.set('views', __dirname + '\\views');
+app.set('views', __dirname + '/views');
 
 
 app.use('/', require('./routers'));
