@@ -4,7 +4,10 @@ var router = express.Router();
 require('../utils/filelist')(__dirname).forEach(file => router.use(`/${file}`, require(`./${file}`)));
 
 router.get('/', function(req, res) {
-  res.send();
+  res.render('index', {
+    Page: { title: 'Title goes here' },
+    hello: 'HELLO'
+  });
 });
 
 router.get('/about', function(req, res) {
