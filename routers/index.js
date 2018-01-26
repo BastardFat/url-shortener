@@ -1,17 +1,110 @@
 var express = require('express');
 var router = express.Router();
 
+const asyncroute = require('../utils/asyncroute');
+const urlservice = require('../services').urls;
+const userservice = require('../services').user;
+const authmiddleware = require('../utils/authmiddleware');
+
+
 require('../utils/filelist')(__dirname).forEach(file => router.use(`/${file}`, require(`./${file}`)));
 
-router.get('/', function(req, res) {
-  res.render('index', {
-    Page: { title: 'Title goes here' },
-    hello: 'HELLO'
-  });
-});
+router.use(authmiddleware.userCheck());
 
-router.get('/about', function(req, res) {
-  res.send('about page');
-});
+
+
+router.get ('/', asyncroute(async (req, res, next) => {
+  if (req.anonymous) {
+    render('index', req, res, null);
+  } else {
+    res.redirect('myurls');
+  }
+}));
+
+router.get ('/about', asyncroute(async (req, res, next) => {
+  render('about', req, res, null);
+}));
+
+router.get ('/login', asyncroute(async (req, res, next) => {
+  render('login', req, res, null, 'Login');
+}));
+
+router.post('/login', asyncroute(async (req, res, next) => {
+
+  var body = req.body;
+  if (!body.email || !body.password) {
+    res.status(400).send('Bad request');
+    return;
+  }
+
+  try {
+    var t = await userservice.login(body.email, body.password);
+  } catch (e) {
+    render('login', req, res, null, 'Login', e.message);
+    return;
+  }
+
+  res.cookie('auth', t);
+  res.redirect('/');
+
+}));
+
+router.get ('/logout', asyncroute(async (req, res, next) => {
+  res.cookie('auth' , '', {expire : new Date(0)});
+  res.redirect('/');
+}));
+
+router.use ('/myurls', authmiddleware.authorize());
+router.get ('/myurls', asyncroute(async (req, res, next) => {
+
+  var model = {};
+  model.urls = (await urlservice.listAll(req.user._id))
+    .map((item, index) => ({
+      index: (index + 1),
+      item: {
+        name:item.name,
+        url: item.url,
+        date: item.date.toLocaleDateString(),
+        short: `${req.hostname}/go/${item._id}`
+      }
+    }));
+
+  render('myurls', req, res, model, 'My urls');
+
+}));
+
+router.use ('/add', authmiddleware.authorize());
+router.post('/add', asyncroute(async (req, res, next) => {
+
+  var body = req.body;
+  if (!body.url) {
+    render('myurls', req, res, model, 'My urls', 'Url is required');
+    return;
+  }
+  body.name = body.name ? body.name : null;
+  var t = await urlservice.addNew(body.url, req.user._id, body.name);
+
+  res.redirect('/myurls');
+
+}));
+
+
+router.get ('/go/:id', asyncroute(async (req, res, next) => {
+
+  var result = await urlservice.getById(req.params.id);
+  if (!result) {
+    res.status(404).send('Not found');
+    return;
+  }
+  res.redirect(result.url);
+
+}));
+
+
+
+function render(view, req, res, model, title, error) {
+  title = (!title) ? 'Url Shortener' : (title + ' | Url Shortener');
+  return res.render(view, { page: { title: title, user : req.user, anonymous: req.anonymous, error: error }, model: model });
+}
 
 module.exports = router;

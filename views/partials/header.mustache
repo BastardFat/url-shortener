@@ -2,7 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>{{ Page.title }}</title>
+  <title>{{ page.title }}</title>
 </head>
   <body>
-    <h2>{{ Page.title }}</h2>
+    {{# page.anonymous }}
+      You are not loged in. <a href="login">Login</a>
+    {{/ page.anonymous}}
+    {{^ page.anonymous }}
+      Welcome back, {{ page.user.email }}. <a href="logout">Logout</a>
+    {{/ page.anonymous}}
+
+    <p><b>{{ page.error }}</b></p>

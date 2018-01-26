@@ -20,6 +20,7 @@ module.exports = {
   },
 
   validate: (token) => {
+    if(!token || token == '' || typeof(token) != 'string') return null;
     var splited = token.split('.');
     if (splited.length != 2) return null;
     var payload = fromBase64(splited[0]);

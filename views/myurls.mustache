@@ -1,0 +1,36 @@
+{{> header}}
+
+<form action="add" method="post">
+  <input type="text" name="name" placeholder="Enter name" />
+  <input type="url" name="url" value="http://" required/>
+  <button type="submit">Add</button>
+</form>
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Added</th>
+      <th>Name</th>
+      <th>Url</th>
+      <th>Short Url</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#model.urls}}
+    <tr>
+      <td>{{index}}</td>
+      <td>{{item.date}}</td>
+      <td>{{item.name}}</td>
+      <td>{{item.url}}</td>
+      <td>{{item.short}}</td>
+      <td></tr>
+    </tr>
+    {{/model.urls}}
+  </tbody>
+</table>
+
+{{> footer}}
