@@ -17,5 +17,5 @@ class Database {
 }
 
 module.exports = {
-  urlshortener: new Database('mongodb://admin:t367830t@ds215208.mlab.com:15208/url-shortener', 'url-shortener')
+  urlshortener: new Database(`mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@ds215208.mlab.com:15208/url-shortener', 'url-shortener`)
 };
