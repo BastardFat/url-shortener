@@ -7,7 +7,7 @@
   <div class="column"></div>
   <div class="column">
     <div class="box has-text-centered">
-      <form action="login" method="post">
+      <form action="register" method="post">
         <div class="field">
           <label class="label">E-mail</label>
           <p class="control">
@@ -21,8 +21,14 @@
           </p>
         </div>
         <div class="field">
+          <label class="label">Repeat password</label>
+          <p class="control">
+            <input class="input" type="password" name="repeat" required />
+          </p>
+        </div>
+        <div class="field">
           <div class="control">
-            <button class="button is-primary" type="submit">Login</button>
+            <button class="button is-primary" type="submit">Register</button>
           </div>
         </div>
       </form>

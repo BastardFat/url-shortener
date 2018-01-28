@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 
 
-app.use(express.static(__dirname + '/static/html'));
+app.use(express.static(__dirname + '/static'));
 
 var mustacheExpress = require('mustache-express');
 app.engine('mustache', mustacheExpress(__dirname + '/views//partials', '.mustache'));

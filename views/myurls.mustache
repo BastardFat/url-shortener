@@ -1,20 +1,44 @@
 {{> header}}
+<section class="section">
+<div class="container">
 
-<form action="add" method="post">
-  <input type="text" name="name" placeholder="Enter name" />
-  <input type="url" name="url" value="http://" required/>
-  <button type="submit">Add</button>
-</form>
+<div class="box">
+  <form action="add" method="post">
+    <div class="field is-horizontal">
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input class="input" type="text" name="name" placeholder="Name (optional)" />
+          </p>
+        </div>
+        <div class="field">
+          <p class="control is-expanded">
+            <input class="input" type="url" name="url" placeholder="http://" required/>
+          </p>
+        </div>
+        <div class="field">
+          <div class="control">
+            <button class="button is-primary" type="submit">
+              <span class="icon">
+                <i class="fa fa-plus"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
 
 
 
-<table>
+<div class="box">
+<table class="table is-hoverable is-fullwidth">
   <thead>
     <tr>
       <th>#</th>
       <th>Added</th>
       <th>Name</th>
-      <th>Url</th>
       <th>Short Url</th>
       <th></th>
     </tr>
@@ -24,13 +48,36 @@
     <tr>
       <td>{{index}}</td>
       <td>{{item.date}}</td>
-      <td>{{item.name}}</td>
-      <td>{{item.url}}</td>
-      <td>{{item.short}}</td>
+      <td class="tooltip" data-tooltip="{{item.url}}">
+        {{#item.name}}
+          {{item.name}}
+        {{/item.name}}
+        {{^item.name}}
+          {{item.trimmedurl}}
+        {{/item.name}}
+      </td>
+      <td>
+        <div class="field has-addons">
+          <div class="control is-expanded">
+            <input class="input" id="{{item.id}}" type="text" value="{{item.short}}" readonly>
+          </div>
+          <div class="control">
+            <a class="button" onclick="copy('{{item.id}}')">
+              <span class="icon">
+                <i class="fa fa-clipboard"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+      </td>
       <td></tr>
     </tr>
     {{/model.urls}}
   </tbody>
 </table>
+</div>
+
+</div>
+</section>
 
 {{> footer}}

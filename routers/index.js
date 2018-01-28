@@ -29,11 +29,15 @@ router.get ('/login', asyncroute(async (req, res, next) => {
   render('login', req, res, null, 'Login');
 }));
 
+router.get ('/register', asyncroute(async (req, res, next) => {
+  render('register', req, res, null, 'Register');
+}));
+
 router.post('/login', asyncroute(async (req, res, next) => {
 
   var body = req.body;
   if (!body.email || !body.password) {
-    res.status(400).send('Bad request');
+    render('login', req, res, null, 'Login', 'Please enter login and password');
     return;
   }
 
@@ -46,6 +50,30 @@ router.post('/login', asyncroute(async (req, res, next) => {
 
   res.cookie('auth', t);
   res.redirect('/');
+
+}));
+
+router.post('/register', asyncroute(async (req, res, next) => {
+
+  var body = req.body;
+  if (!body.email || !body.password) {
+    render('register', req, res, null, 'Register', 'Please enter login and password');
+    return;
+  }
+
+  if (body.password != body.repeat) {
+    render('register', req, res, null, 'Register', 'Passwords are not the same');
+    return;
+  }
+  try {
+    var t = await userservice.register(body.email, body.password);
+  } catch (e) {
+    render('register', req, res, null, 'Register', e.message);
+    return;
+  }
+
+  res.cookie('auth', t);
+  res.redirect('/myurls');
 
 }));
 
@@ -62,7 +90,9 @@ router.get ('/myurls', asyncroute(async (req, res, next) => {
     .map((item, index) => ({
       index: (index + 1),
       item: {
-        name:item.name,
+        id: item._id,
+        trimmedurl: ( (item.url.length > 25) ? (item.url.substring(0,25) + '...') : item.url ),
+        name: item.name,
         url: item.url,
         date: item.date.toLocaleDateString(),
         short: `${req.hostname}/go/${item._id}`
